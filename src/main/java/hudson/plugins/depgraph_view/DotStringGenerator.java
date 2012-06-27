@@ -136,7 +136,7 @@ public class DotStringGenerator {
         StringBuilder builder = new StringBuilder();
 
         builder.append("digraph {\n");
-        builder.append("node [shape=box, style=rounded];\n");
+        builder.append("node [shape=box, style=\"filled,rounded\"];\n");
 
         /**** First define all the objects and clusters ****/
 
@@ -236,22 +236,24 @@ public class DotStringGenerator {
         return set;
     }
 
-
+    
     private String projectToNodeString(AbstractProject<?, ?> proj) {
-        return escapeString(proj.getFullDisplayName()) +
-                " [href=" +
-                getEscapedProjectUrl(proj) + "]";
+    	return escapeString(proj.getFullDisplayName()) +
+    			" [fillcolor=" + escapeString(proj.getIconColor().getHtmlBaseColor()) + 
+    			", href=" +
+    			getEscapedProjectUrl(proj) + "]";
     }
 
     private String projectToNodeString(AbstractProject<?, ?> proj, List<AbstractProject<?,?>> subprojects) {
+    	String nodeColor = proj.getIconColor().getHtmlBaseColor();
         StringBuilder builder = new StringBuilder();
         builder.append(escapeString(proj.getFullDisplayName()))
                 .append(" [shape=\"Mrecord\" href=")
                 .append(getEscapedProjectUrl(proj))
-                .append(" label=<<table border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=\"white\">\n");
+                .append(" fillcolor=" + escapeString(nodeColor) + " label=<<table border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=" + escapeString(nodeColor) + ">\n");
         builder.append(getProjectRow(proj));
         for (AbstractProject<?, ?> subproject : subprojects) {
-            builder.append(getProjectRow(subproject, "bgcolor=" + escapeString(subProjectColor))).append("\n");
+            builder.append(getProjectRow(subproject, "bgcolor=" + escapeString(subproject.getIconColor().getHtmlBaseColor()))).append("\n");
         }
         builder.append("</table>>]");
         return builder.toString();
