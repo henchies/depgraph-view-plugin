@@ -238,15 +238,11 @@ public class DotStringGenerator {
     }
     
     private String projectToNodeString(AbstractProject<?, ?> proj) {
-    	String projColor = getHtmlDarkerColor(proj.getIconColor().getBaseColor().darker());
+    	String projColor = proj.getIconColor().getHtmlBaseColor();
     	return escapeString(proj.getFullDisplayName()) +
     			" [fillcolor=" + escapeString(projColor) + 
     			", href=" +
     			getEscapedProjectUrl(proj) + "]";
-    }
-    
-    public String getHtmlDarkerColor(Color baseColor) {
-        return String.format("#%06X",baseColor.getRGB()&0xFFFFFF);
     }
     
     private String projectToNodeString(AbstractProject<?, ?> proj, List<AbstractProject<?,?>> subprojects) {
@@ -258,12 +254,17 @@ public class DotStringGenerator {
                 .append(" fillcolor=" + escapeString(nodeColor) + " label=<<table border=\"0\" cellborder=\"0\" cellpadding=\"3\" bgcolor=" + escapeString(nodeColor) + ">\n");
         builder.append(getProjectRow(proj));
         for (AbstractProject<?, ?> subproject : subprojects) {
-            builder.append(getProjectRow(subproject, "bgcolor=" + escapeString(subproject.getIconColor().getHtmlBaseColor()))).append("\n");
+        	String darkerNodeColor = getHtmlDarkerColor(subproject.getIconColor().getBaseColor().darker());
+            builder.append(getProjectRow(subproject, "bgcolor=" + escapeString(darkerNodeColor))).append("\n");
         }
         builder.append("</table>>]");
         return builder.toString();
     }
 
+    public String getHtmlDarkerColor(Color baseColor) {
+    	return String.format("#%06X",baseColor.getRGB()&0xFFFFFF);
+    }
+    
     private String getProjectRow(AbstractProject<?,?> project, String... extraColumnProperties) {
         return String.format("<tr><td align=\"center\" href=%s %s>%s</td></tr>", getEscapedProjectUrl(project), Joiner.on(" ").join(extraColumnProperties),
                 project.getFullDisplayName());
