@@ -32,6 +32,7 @@ import hudson.model.AbstractProject;
 import hudson.model.DependencyGraph;
 import hudson.model.Hudson;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -235,15 +236,19 @@ public class DotStringGenerator {
         }
         return set;
     }
-
     
     private String projectToNodeString(AbstractProject<?, ?> proj) {
+    	String projColor = getHtmlDarkerColor(proj.getIconColor().getBaseColor().darker());
     	return escapeString(proj.getFullDisplayName()) +
-    			" [fillcolor=" + escapeString(proj.getIconColor().getHtmlBaseColor()) + 
+    			" [fillcolor=" + escapeString(projColor) + 
     			", href=" +
     			getEscapedProjectUrl(proj) + "]";
     }
-
+    
+    public String getHtmlDarkerColor(Color baseColor) {
+        return String.format("#%06X",baseColor.getRGB()&0xFFFFFF);
+    }
+    
     private String projectToNodeString(AbstractProject<?, ?> proj, List<AbstractProject<?,?>> subprojects) {
     	String nodeColor = proj.getIconColor().getHtmlBaseColor();
         StringBuilder builder = new StringBuilder();
